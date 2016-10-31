@@ -7,7 +7,7 @@ int main()
 {
     //Scraper scraper("https://www.reddit.com/r/pepethefrog/", "pepe");
     //scraper.scrape();
-    Ingester ingest("hi.txt");
+    Ingester ingest("memlist.txt");
     ingest.ingest();
 
     return 0;

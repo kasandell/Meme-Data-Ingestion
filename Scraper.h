@@ -38,6 +38,9 @@ class Scraper
         std::string baseURL;
         std::string desc;
         
+        std::string base;
+        std::string params;
+        
         std::atomic<bool> killed;
 
 

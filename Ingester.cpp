@@ -50,10 +50,6 @@ void Ingester::ingest()
     {
         results.emplace_back(
                 pool.enqueue([&x](){
-                        {
-                            std::unique_lock<std::mutex> lck(outMtx);
-                            std::cout<<"In lambda: " << x.first<<", "<<x.second<<std::endl;
-                        }
                         Scraper s(x.first, x.second);
                         s.scrape();
                         return true;
@@ -62,8 +58,6 @@ void Ingester::ingest()
     }
     for(auto&& res: results)
     {
-        std::cout<<"No issues"<<std::endl;
         res.get();
-        std::cout<<"Issues"<<std::endl;
     }
 }

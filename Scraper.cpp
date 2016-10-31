@@ -27,7 +27,21 @@ Scraper::Scraper()
 Scraper::Scraper(std::string baseURL, std::string memeType): baseURL(baseURL), desc(memeType)
 {
     itemsFound = 0;
-    curURL = baseURL + ".json";
+    std::size_t pos = baseURL.find("?");
+    if(pos != std::string::npos)
+    {
+        base = baseURL.substr(0, pos);
+        params = baseURL.substr(pos);
+        curURL = base + ".json" + params;
+
+    }
+    else
+    {
+        curURL = baseURL + ".json";
+        base = baseURL;
+        params = "";
+    }
+
 }
 
 void Scraper::scrape()
@@ -50,6 +64,10 @@ void Scraper::scrape()
             }
             js = grabPage();
             std::vector<std::string> links = getLinks();
+            if(links.size() == 0)
+            {
+                return;
+            }
             std::async(&Scraper::writeToFile, this, links);
 
             createNextLink();
@@ -96,11 +114,16 @@ std::string Scraper::grabPage()
 
 void Scraper::createNextLink()
 {
-    curURL = baseURL;
-    curURL +=".json";
     std::regex r{"\"name\": \"(\\w+)\""};
     auto last = findLastOf(r);
-    curURL += ("?after=" + last);
+    if(params != "")
+    {
+        curURL = base + ".json" + params + ("&after=" + last);
+    }
+    else
+    {
+        curURL = baseURL + ".json" + ("?after=" + last);
+    }
 }
 
 std::vector<std::string> Scraper::getLinks()
